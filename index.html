@@ -558,6 +558,7 @@ car(-17, 8, 0x9a4e3e);
 car(17, 8, 0x4d6576);
 car(50, -5, 0xd4d1c7);
 
+
 // ====================================
 // PLAYER CONTROLS
 // ====================================
@@ -567,12 +568,12 @@ let jumpHeight = 0;
 let jumpVelocity = 0;
 
 let joystick = { x: 0, y: 0 };
+let joystickPointerId = null;
 
 const joystickElement = document.querySelector("#joystick");
 const stick = document.querySelector("#stick");
 
 function updateJoystick(event) {
-
   const rect = joystickElement.getBoundingClientRect();
 
   let dx = event.clientX - (rect.left + rect.width / 2);
@@ -589,16 +590,14 @@ function updateJoystick(event) {
   joystick.x = dx / max;
   joystick.y = dy / max;
 
-  stick.style.transform =
-    `translate(${dx}px, ${dy}px)`;
+  stick.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 
-joystickElement.addEventListener("pointerdown", e => {
-  joystickElement.setPointerCapture(e.pointerId);
-  updateJoystick(e);
-});
-
-let joystickPointerId = null;
+function resetJoystick() {
+  joystickPointerId = null;
+  joystick = { x: 0, y: 0 };
+  stick.style.transform = "translate(0,0)";
+}
 
 joystickElement.addEventListener("pointerdown", e => {
   e.preventDefault();
@@ -614,24 +613,11 @@ joystickElement.addEventListener("pointermove", e => {
   }
 });
 
-function resetJoystick() {
-  joystickPointerId = null;
-  joystick = { x: 0, y: 0 };
-  stick.style.transform = "translate(0,0)";
-}
-
 joystickElement.addEventListener("pointerup", resetJoystick);
 joystickElement.addEventListener("pointercancel", resetJoystick);
+joystickElement.addEventListener("lostpointercapture", resetJoystick);
 
-function resetJoystick() {
-  joystick = { x: 0, y: 0 };
-  stick.style.transform = "translate(0,0)";
-}
-
-joystickElement.addEventListener("pointerup", resetJoystick);
-joystickElement.addEventListener("pointercancel", resetJoystick);
-
-// Camera rotation: drag the right side of the screen.
+// Camera rotation
 let dragging = false;
 let previousX = 0;
 
@@ -656,6 +642,7 @@ renderer.domElement.addEventListener("pointerup", () => {
 renderer.domElement.addEventListener("pointercancel", () => {
   dragging = false;
 });
+
 
 // ====================================
 // ACTION BUTTONS
