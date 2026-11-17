@@ -814,16 +814,13 @@ animate();
 // START GAME
 // ====================================
 
-document.querySelector("#play").onclick = () => {
-
+document.querySelector("#play").addEventListener("click", function() {
   document.querySelector("#start").style.display = "none";
 
-  try {
-    if (screen.orientation?.lock) {
-      screen.orientation.lock("landscape").catch(() => {});
-    }
-  } catch {}
-};
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock("landscape").catch(() => {});
+  }
+});
 
 // ====================================
 // RESIZE
