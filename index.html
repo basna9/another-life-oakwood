@@ -438,77 +438,117 @@ block(10, 0.35, 2,
 // CHARACTERS
 // ====================================
 
-function character(name, shirt, trousers, x, z) {
 
+function character(name, shirt, trousers, x, z) {
   const group = new THREE.Group();
   group.position.set(x, 0, z);
-
   scene.add(group);
 
-  const skin = material(0xd7a47f);
+  const skin = material(0xc98f6b);
   const top = material(shirt);
   const pants = material(trousers);
-  const hair = material(0x29221f);
-  const shoes = material(0x282c31);
-
-  const torso = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.42, 0.8, 5, 10),
-    top
+  const hair = material(
+    name === "Elena" ? 0x493023 : 0x211b19
   );
+  const shoes = material(0x25272b);
+  const white = material(0xf5eee5);
+  const dark = material(0x241b18);
 
-  torso.position.y = 1.45;
-  torso.castShadow = true;
-  group.add(torso);
+  function sphere(parent, x, y, z, sx, sy, sz, mat) {
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 20, 16), mat
+    );
+    m.position.set(x, y, z);
+    m.scale.set(sx, sy, sz);
+    m.castShadow = true;
+    parent.add(m);
+    return m;
+  }
 
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.31, 16, 12),
-    skin
-  );
+  function capsule(parent, x, y, z, radius, length, mat) {
+    const m = new THREE.Mesh(
+      new THREE.CapsuleGeometry(radius, length, 5, 12), mat
+    );
+    m.position.set(x, y, z);
+    m.castShadow = true;
+    parent.add(m);
+    return m;
+  }
 
-  head.position.y = 2.35;
-  head.castShadow = true;
-  group.add(head);
+  // Torso and neck
+  capsule(group, 0, 1.43, 0, 0.34, 0.66, top);
+  capsule(group, 0, 1.98, 0, 0.11, 0.16, skin);
 
-  const hairCap = new THREE.Mesh(
-    new THREE.SphereGeometry(
-      0.32, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.52
-    ),
-    hair
-  );
+  // Shoulders
+  sphere(group, -0.34, 1.77, 0, 0.19, 0.18, 0.19, top);
+  sphere(group, 0.34, 1.77, 0, 0.19, 0.18, 0.19, top);
 
-  hairCap.position.y = 2.43;
-  group.add(hairCap);
+  // Head
+  sphere(group, 0, 2.32, 0, 0.27, 0.34, 0.25, skin);
+
+  // Ears
+  sphere(group, -0.275, 2.32, 0, 0.065, 0.09, 0.07, skin);
+  sphere(group, 0.275, 2.32, 0, 0.065, 0.09, 0.07, skin);
+
+  // Face: eyes, pupils, eyebrows and nose
+  for (const side of [-1, 1]) {
+    sphere(group, side * 0.105, 2.36, 0.225,
+      0.045, 0.035, 0.025, white);
+    sphere(group, side * 0.105, 2.36, 0.249,
+      0.018, 0.023, 0.012, dark);
+    sphere(group, side * 0.105, 2.43, 0.226,
+      0.055, 0.018, 0.018, hair);
+  }
+
+  sphere(group, 0, 2.28, 0.26, 0.045, 0.06, 0.05, skin);
+  sphere(group, 0, 2.17, 0.22, 0.09, 0.025, 0.025, dark);
+
+  // Hair cap
+  sphere(group, 0, 2.56, -0.005, 0.28, 0.15, 0.27, hair);
+  sphere(group, -0.22, 2.43, 0, 0.075, 0.17, 0.22, hair);
+  sphere(group, 0.22, 2.43, 0, 0.075, 0.17, 0.22, hair);
+
+  if (name === "Elena") {
+    capsule(group, -0.24, 2.18, -0.04, 0.09, 0.42, hair);
+    capsule(group, 0.24, 2.18, -0.04, 0.09, 0.42, hair);
+  } else {
+    sphere(group, 0, 2.49, 0.19, 0.19, 0.075, 0.12, hair);
+  }
+
+  // Waist and trousers
+  capsule(group, 0, 0.91, 0, 0.31, 0.16, pants);
 
   const arms = [];
   const legs = [];
 
   for (const side of [-1, 1]) {
-
-    const arm = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.13, 0.58, 4, 8),
-      skin
-    );
-
-    arm.position.set(side * 0.52, 1.48, 0);
+    // Arms with shoulder pivots
+    const arm = new THREE.Group();
+    arm.position.set(side * 0.43, 1.76, 0);
     group.add(arm);
+
+    capsule(arm, 0, -0.36, 0, 0.105, 0.43, top);
+    capsule(arm, 0, -0.72, 0, 0.085, 0.30, skin);
+    sphere(arm, 0, -0.91, 0.02, 0.09, 0.11, 0.08, skin);
     arms.push(arm);
 
-    const leg = new THREE.Mesh(
-      new THREE.CapsuleGeometry(0.17, 0.68, 4, 8),
-      pants
-    );
-
-    leg.position.set(side * 0.2, 0.55, 0);
+    // Legs with hip pivots
+    const leg = new THREE.Group();
+    leg.position.set(side * 0.18, 0.91, 0);
     group.add(leg);
-    legs.push(leg);
+
+    capsule(leg, 0, -0.27, 0, 0.14, 0.35, pants);
+    capsule(leg, 0, -0.65, 0, 0.105, 0.35, pants);
 
     const foot = new THREE.Mesh(
-      new THREE.BoxGeometry(0.25, 0.14, 0.42),
+      new THREE.BoxGeometry(0.22, 0.13, 0.36),
       shoes
     );
+    foot.position.set(0, -0.91, 0.08);
+    foot.castShadow = true;
+    leg.add(foot);
 
-    foot.position.set(side * 0.2, 0.12, 0.09);
-    group.add(foot);
+    legs.push(leg);
   }
 
   return { group, arms, legs, name };
@@ -525,6 +565,7 @@ const elena = character(
 const ryan = character(
   "Ryan", 0x668d59, 0x394b40, -8, 22
 );
+
 
 // ====================================
 // VEHICLES
