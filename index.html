@@ -598,9 +598,30 @@ joystickElement.addEventListener("pointerdown", e => {
   updateJoystick(e);
 });
 
-joystickElement.addEventListener("pointermove", e => {
-  if (e.buttons) updateJoystick(e);
+let joystickPointerId = null;
+
+joystickElement.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  joystickPointerId = e.pointerId;
+  joystickElement.setPointerCapture(e.pointerId);
+  updateJoystick(e);
 });
+
+joystickElement.addEventListener("pointermove", e => {
+  if (e.pointerId === joystickPointerId) {
+    e.preventDefault();
+    updateJoystick(e);
+  }
+});
+
+function resetJoystick() {
+  joystickPointerId = null;
+  joystick = { x: 0, y: 0 };
+  stick.style.transform = "translate(0,0)";
+}
+
+joystickElement.addEventListener("pointerup", resetJoystick);
+joystickElement.addEventListener("pointercancel", resetJoystick);
 
 function resetJoystick() {
   joystick = { x: 0, y: 0 };
