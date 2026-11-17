@@ -1,154 +1,834 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#101b20"><title>Another Life — Oakwood</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Another Life - Oakwood</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101b20;color:#fff;font-family:Inter,system-ui,Arial;touch-action:none}
-#game{position:fixed;inset:0}canvas{display:block}
-#hud{position:fixed;inset:0;pointer-events:none}
-.glass{background:#101c20c9;border:1px solid #ffffff26;backdrop-filter:blur(9px);border-radius:12px;box-shadow:0 5px 24px #0005}
-#logo{position:absolute;left:14px;top:12px;padding:9px 12px;font-size:11px;font-weight:900;letter-spacing:2px}#logo small{display:block;color:#e8c47e;font-size:8px;letter-spacing:3px;margin-top:3px}
-#mission{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:min(360px,48vw);padding:9px 12px}#mission b{font-size:10px;letter-spacing:1px;color:#f0ca7f}#mission div{font-size:12px;margin-top:4px}
-#status{position:absolute;right:12px;top:12px;padding:9px 12px;text-align:right;font-size:10px;line-height:1.6}
-#mapBtn{position:absolute;right:12px;top:88px;width:124px;height:124px;padding:5px;pointer-events:auto;cursor:pointer}#mini{width:100%;height:100%;border-radius:8px}
-#mapLabel{position:absolute;right:17px;top:216px;font-size:8px;letter-spacing:1px;color:#e3e7e1}
-#hint{position:absolute;left:14px;bottom:12px;padding:9px 12px;font-size:10px;max-width:260px}
-#actions{position:absolute;right:15px;bottom:14px;display:flex;gap:7px;pointer-events:auto;align-items:end}
-button{font:inherit;color:white;cursor:pointer}
-.act{width:49px;height:49px;border-radius:50%;border:1px solid #ffffff44;background:#122328d9;font-size:9px;font-weight:800;touch-action:none}.act.main{border-color:#e8c47e;color:#f8d99e}
-#stick{position:absolute;left:20px;bottom:20px;width:124px;height:124px;border-radius:50%;background:#14272b88;border:1px solid #ffffff30;pointer-events:auto;touch-action:none;display:none}
-#nub{position:absolute;width:52px;height:52px;left:36px;top:36px;border-radius:50%;background:#d9e0d7aa;border:1px solid #fff8}
-#toast{position:absolute;left:50%;bottom:92px;transform:translateX(-50%);padding:9px 14px;font-size:12px;opacity:0;transition:opacity .2s;white-space:nowrap}
-#overlay,#intro,#rotate{position:fixed;inset:0;z-index:5;display:none;align-items:center;justify-content:center;background:#071115ed;padding:16px}
-#intro{display:flex;background:linear-gradient(135deg,#102127,#263f39 65%,#52644d)}
-.card{width:min(560px,94vw);padding:25px}.card h1{font-size:clamp(30px,7vw,55px);letter-spacing:4px;margin:0}.gold{color:#f0ca7f}.muted{color:#c0cec7;line-height:1.55;font-size:13px}
-.primary{background:#efc97f;color:#1c2522;border:0;border-radius:8px;padding:12px 19px;font-weight:900;letter-spacing:1px;margin-top:8px}
-#mapPanel{width:min(850px,96vw);height:min(650px,90vh);display:flex;flex-direction:column;gap:10px;padding:15px}
-#mapTop{display:flex;justify-content:space-between;align-items:center}#mapTop b{color:#efc97f;letter-spacing:2px}#bigMap{width:100%;flex:1;min-height:0;border-radius:8px;background:#1b3433}
-#close{border:1px solid #ffffff44;background:#263a3d;padding:8px 12px;border-radius:8px}
-#rotate{z-index:8;background:#0b1519;color:white;text-align:center}#rotate .card{max-width:360px}
-@media(hover:none),(pointer:coarse){#stick{display:block}}
-@media(max-width:650px){#logo{left:7px;top:7px;padding:7px;font-size:9px}#mission{top:7px;width:45vw;left:52%;padding:7px 9px}#mission div{font-size:10px}#status{top:73px;right:7px;padding:6px 8px;font-size:9px}#mapBtn{top:auto;bottom:92px;right:7px;width:100px;height:100px}#mapLabel{top:auto;bottom:78px;right:9px;font-size:7px}#hint{left:7px;bottom:7px;max-width:42vw;font-size:9px;padding:7px}#actions{right:7px;bottom:7px;gap:4px}.act{width:42px;height:42px;font-size:8px}#stick{left:8px;bottom:12px;width:112px;height:112px}#nub{left:30px;top:30px;width:50px;height:50px}}
-@media(orientation:portrait) and (max-width:800px){#rotate{display:flex}}
+* {
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #9cc7d2;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+#game {
+  position: fixed;
+  inset: 0;
+}
+
+canvas {
+  display: block;
+}
+
+#title {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  background: #172b35cc;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: bold;
+  z-index: 2;
+}
+
+#mission {
+  position: fixed;
+  top: 60px;
+  left: 12px;
+  background: #172b35cc;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+#joystick {
+  position: fixed;
+  left: 24px;
+  bottom: 25px;
+  width: 120px;
+  height: 120px;
+  border: 2px solid #ffffffaa;
+  background: #ffffff30;
+  border-radius: 50%;
+  z-index: 3;
+}
+
+#stick {
+  position: absolute;
+  left: 34px;
+  top: 34px;
+  width: 48px;
+  height: 48px;
+  background: #ffffffdd;
+  border-radius: 50%;
+}
+
+.actions {
+  position: fixed;
+  right: 18px;
+  bottom: 25px;
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+}
+
+button {
+  border: 1px solid white;
+  background: #214b5bdd;
+  color: white;
+  border-radius: 50%;
+  width: 65px;
+  height: 65px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#jump {
+  width: 76px;
+  height: 76px;
+  background: #b87851;
+}
+
+#toast {
+  position: fixed;
+  bottom: 160px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #172b35dd;
+  padding: 10px 16px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity .2s;
+  white-space: nowrap;
+  z-index: 4;
+}
+
+#start {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(140deg,#183b48,#376d68);
+  text-align: center;
+  padding: 20px;
+}
+
+.panel {
+  max-width: 420px;
+  background: #102630dd;
+  padding: 28px;
+  border-radius: 22px;
+  border: 1px solid #ffffff44;
+}
+
+.panel h1 {
+  font-size: 36px;
+  margin: 10px 0;
+}
+
+.panel p {
+  line-height: 1.5;
+  color: #dce8e8;
+}
+
+#play {
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  background: #e5a273;
+  color: #172b35;
+  padding: 14px 25px;
+  font-size: 16px;
+}
+
+#rotate {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  background: #142d38;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 22px;
+}
+
+@media (orientation: portrait) {
+  #rotate { display: flex; }
+}
 </style>
 </head>
+
 <body>
+
 <div id="game"></div>
-<div id="hud">
- <div id="logo" class="glass">ANOTHER LIFE <small>OAKWOOD · 3D PROTOTYPE</small></div>
- <div id="mission" class="glass"><b id="mTitle">MISSION 01 · A NEW MORNING</b><div id="mText">Explore Oakwood and find your family home.</div></div>
- <div id="status" class="glass">JAMES · <span id="mode">ON FOOT</span><br>DAY 01 · 08:30 AM<br><span class="gold" id="cash">$2,450</span></div>
- <div id="mapBtn" class="glass"><canvas id="mini" width="256" height="256"></canvas></div><div id="mapLabel">TAP MAP TO EXPAND</div>
- <div id="hint" class="glass"><b class="gold" id="near">OAKWOOD</b><br><span id="hintText">Move with joystick · Interact nearby</span></div>
- <div id="stick"><div id="nub"></div></div>
- <div id="actions"><button class="act main" id="interact">USE<br>E</button><button class="act" id="hug">HUG</button><button class="act" id="kiss">KISS</button><button class="act" id="wave">WAVE</button><button class="act" id="fight">SPAR</button></div>
- <div id="toast" class="glass"></div>
+
+<div id="title">ANOTHER LIFE · OAKWOOD</div>
+<div id="mission">MISSION 01 · Explore Oakwood</div>
+
+<div id="joystick">
+  <div id="stick"></div>
 </div>
-<div id="overlay"><div id="mapPanel" class="glass"><div id="mapTop"><b>OAKWOOD CITY MAP</b><button id="close">CLOSE ✕</button></div><canvas id="bigMap" width="900" height="650"></canvas><div class="muted" style="font-size:10px">Gold = James · Blue = people · Pale markers = places</div></div></div>
-<div id="intro"><div class="card glass"><h1>ANOTHER <span class="gold">LIFE</span></h1><div style="letter-spacing:5px;font-size:10px;margin:8px 0 16px">OAKWOOD · COASTAL CITY</div><p class="muted">A new day. A whole city. A life waiting to happen. Explore Oakwood as James, meet Elena and Ryan, visit the city and begin your story.</p><p class="muted"><b class="gold">Landscape recommended.</b> Touch joystick to move, action buttons to interact. Desktop: WASD / arrows, E interact, M map, Shift run.</p><button id="start" class="primary">ENTER OAKWOOD</button></div></div>
-<div id="rotate"><div class="card glass"><div style="font-size:35px">↻</div><h2>TURN YOUR PHONE</h2><p class="muted">Another Life is designed to be played horizontally. Rotate your phone to landscape mode.</p></div></div>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+
+<div class="actions">
+  <button id="wave">WAVE</button>
+  <button id="talk">TALK</button>
+  <button id="jump">JUMP</button>
+</div>
+
+<div id="toast"></div>
+
+<div id="rotate">
+  ↻<br><br>Please rotate your phone to landscape.
+</div>
+
+<div id="start">
+  <div class="panel">
+    <div style="font-size:45px">🌴</div>
+    <h1>ANOTHER LIFE<br>OAKWOOD</h1>
+    <p>Two lives. One city. Infinite possibilities.</p>
+    <p>Explore your new home, meet friends and discover a new life.</p>
+    <button id="play">ENTER OAKWOOD</button>
+  </div>
+</div>
+
 <script type="module">
-import * as THREE from 'three';
-const mount=document.querySelector('#game');
-let scene,camera,renderer,clock,player,avatar,vehicle=null,nearObj=null,started=false,mission=0,cash=2450;
-const keys={},joy={x:0,y:0,active:false};let toastTimer;
-const WORLD=120;
-const locations=[
-{name:'James Family Home',x:-38,z:-32,w:15,d:12,h:7,type:'home'},
-{name:'Oakwood Hospital',x:-5,z:-34,w:19,d:13,h:9,type:'hospital'},
-{name:'Police Station',x:32,z:-33,w:16,d:12,h:8,type:'police'},
-{name:'Seaview Apartments',x:48,z:-4,w:13,d:20,h:16,type:'apartment'},
-{name:'Harbour Café',x:-5,z:8,w:12,d:9,h:5,type:'cafe'},
-{name:'Oakwood Flats',x:31,z:9,w:16,d:13,h:11,type:'flats'},
-{name:'Community Centre',x:-38,z:32,w:15,d:11,h:6,type:'community'},
-{name:'Beach Club',x:2,z:38,w:17,d:10,h:6,type:'club'}
-];
-const missionData=[
-['A NEW MORNING','Explore Oakwood and find your family home.','James Family Home'],
-['FAMILY FIRST','Go home and check in with Maya.','Maya'],
-['BROTHERS IN ARMS','Meet Ryan near the park.','Ryan'],
-['A COFFEE TOGETHER','Find Elena at Harbour Café.','Harbour Café'],
-['HER WORLD','Visit the Seaview Apartments.','Seaview Apartments'],
-['A WALK BY THE SEA','Head down to the beach.','Oakwood Beach'],
-['THE CITY HOSPITAL','Visit Oakwood Hospital.','Oakwood Hospital'],
-['A SMALL FAVOUR','Speak with the nurse.','Nurse'],
-['THE POLICE STATION','Visit the police station.','Police Station'],
-['A RIDE AROUND TOWN','Find a vehicle and take a drive.','Vehicle'],
-['PARK AFTERNOON','Spend a moment in the park.','Oakwood Park'],
-['SISTER’S REQUEST','Return home and speak to Maya.','Maya'],
-['DINNER PLANS','Meet Elena near the beach club.','Beach Club'],
-['OLD FRIENDS','Catch up with Ryan.','Ryan'],
-['CITY ERRAND','Visit the community centre.','Community Centre'],
-['A NEW VIEW','Explore Oakwood Flats.','Oakwood Flats'],
-['THE LONG WAY HOME','Travel across Oakwood.','Road'],
-['SUNSET PROMISE','Return to the beach.','Oakwood Beach'],
-['FAMILY EVENING','Go home to your family.','James Family Home'],
-['ANOTHER LIFE','Explore freely. Your next chapter is yours.','Free Roam']
-];
-function notify(s){const t=document.querySelector('#toast');t.textContent=s;t.style.opacity=1;clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.opacity=0,2200)}
-function setMission(i){mission=Math.min(i,19);document.querySelector('#mTitle').textContent=`MISSION ${String(mission+1).padStart(2,'0')} · ${missionData[mission][0]}`;document.querySelector('#mText').textContent=missionData[mission][1]}
-function complete(){if(mission<19){notify('MISSION COMPLETE · '+missionData[mission][0]);cash+=150;document.querySelector('#cash').textContent='$'+cash.toLocaleString();setMission(mission+1)}else notify('Free roam is open. Explore Oakwood!')}
-function mat(color,rough=.8,metal=0){return new THREE.MeshStandardMaterial({color,roughness:rough,metalness:metal})}
-function box(parent,x,y,z,w,h,d,material){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
-function makePerson(color,shirt){const g=new THREE.Group();const skin=mat(color),cloth=mat(shirt),pants=mat('#293b45'),hair=mat('#302720');const torso=box(g,0,1.15,0,.62,.8,.32,cloth);const head=new THREE.Mesh(new THREE.SphereGeometry(.23,16,12),skin);head.position.y=1.78;g.add(head);const hairCap=new THREE.Mesh(new THREE.SphereGeometry(.235,16,8,0,Math.PI*2,0,Math.PI*.55),hair);hairCap.position.y=1.83;g.add(hairCap);const arms=[],legs=[];for(const s of [-1,1]){const arm=new THREE.Group();arm.position.set(s*.4,1.42,0);box(arm,0,-.28,0,.17,.62,.18,cloth);g.add(arm);arms.push(arm);const leg=new THREE.Group();leg.position.set(s*.18,.72,0);box(leg,0,-.27,0,.22,.72,.25,pants);g.add(leg);legs.push(leg)}g.userData={arms,legs};return g}
-function init(){
- scene=new THREE.Scene();scene.background=new THREE.Color('#9ab9c2');scene.fog=new THREE.Fog('#9ab9c2',65,145);
- camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,220);
- renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;mount.appendChild(renderer.domElement);
- scene.add(new THREE.HemisphereLight('#dcecf0','#59644b',2.0));const sun=new THREE.DirectionalLight('#fff0d2',2.6);sun.position.set(-35,60,-25);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-80;sun.shadow.camera.right=80;sun.shadow.camera.top=80;sun.shadow.camera.bottom=-80;scene.add(sun);
- const ground=new THREE.Mesh(new THREE.PlaneGeometry(WORLD,WORLD),mat('#829978'));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
- // coastal sea and beach
- const sea=new THREE.Mesh(new THREE.PlaneGeometry(WORLD,22),new THREE.MeshStandardMaterial({color:'#438d9c',roughness:.32,metalness:.12}));sea.rotation.x=-Math.PI/2;sea.position.set(0,.05,51);scene.add(sea);
- const sand=new THREE.Mesh(new THREE.PlaneGeometry(WORLD,8),mat('#d6c49a'));sand.rotation.x=-Math.PI/2;sand.position.set(0,.04,39);scene.add(sand);
- // roads
- const roadMat=mat('#4d5759'),lineMat=mat('#d8cba7');
- function road(x,z,w,d){box(scene,x,.035,z,w,.06,d,roadMat);if(w>d){for(let xx=x-w/2+4;xx<x+w/2;xx+=8)box(scene,xx,.071,z,3,.015,.12,lineMat)}else{for(let zz=z-d/2+4;zz<z+d/2;zz+=8)box(scene,x,.071,zz,.12,.015,3,lineMat)}}
- road(0,-20,120,7);road(0,15,120,7);road(-22,0,7,120);road(20,0,7,120);road(45,0,6,120);
- // park
- const park=box(scene,-39,.12,12,22,.22,20,mat('#63895e'));park.position.y=.12;
- for(let i=0;i<18;i++){const x=-49+(i%6)*4,z=5+Math.floor(i/6)*6;tree(x,z)}
- // trees / streetlights
- function tree(x,z){const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2,8),mat('#654c36'));trunk.position.set(x,1,z);scene.add(trunk);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.35,12,10),mat(iColor()));crown.position.set(x,2.7,z);crown.scale.y=1.1;crown.castShadow=true;scene.add(crown)}
- function iColor(){return ['#52754f','#66865a','#587d59'][Math.floor(Math.random()*3)]}
- for(let i=0;i<35;i++){let x=-55+(i*17)%110,z=-55+(i*29)%85;if(Math.abs(x)<26&&Math.abs(z)<27)continue;tree(x,z)}
- // buildings with doors/windows
- const buildingRefs=[];
- locations.forEach((l,index)=>{const group=new THREE.Group();group.position.set(l.x,0,l.z);const colors={home:'#c9b79d',hospital:'#d7e2df',police:'#8299a6',apartment:'#d1c5ae',cafe:'#b98765',flats:'#b4aaa0',community:'#c5cbb8',club:'#d3b78f'};const base=mat(colors[l.type]||'#b9b6a8');box(group,0,l.h/2,0,l.w,l.h,l.d,base);box(group,0,l.h+.12,0,l.w+.5,.25,l.d+.5,mat('#5c6662'));const door=box(group,0,1.1,l.d/2+.02,1.5,2.2,.12,mat('#51483d'));for(let xx=-l.w/2+2;xx<l.w/2-1;xx+=3.2){for(let yy=2.5;yy<l.h-1;yy+=2.7){box(group,xx,yy,l.d/2+.08,1.2,1.25,.08,mat('#7fa2a7',.28,.15))}}const sign=box(group,0,l.h+.9,l.d/2+.2,Math.min(l.w-1,12),.65,.18,mat('#344d50'));group.userData.location=l;scene.add(group);buildingRefs.push(group)});
- // protagonist and NPCs
- player={x:-28,z:4,angle:0,speed:0};avatar=makePerson('#c99473','#344e5e');avatar.position.set(player.x,0,player.z);scene.add(avatar);
- const npcDefs=[['Elena',-2,9,'#d9a17f','#bd8790','girlfriend'],['Ryan',-43,19,'#b98362','#5d8291','friend'],['Maya',-35,-29,'#d5a17f','#986e9b','sister'],['Mum',-40,-26,'#c89572','#a88d6a','family'],['Dad',-31,-26,'#b98463','#62755f','family'],['Nurse',-1,-24,'#c89572','#83b8a9','nurse'],['Officer',29,-24,'#bd8d70','#405b80','officer']];
- const npcs=npcDefs.map(([name,x,z,skin,shirt,kind])=>{const g=makePerson(skin,shirt);g.position.set(x,0,z);g.userData={name,kind};scene.add(g);return g});
- // vehicles
- const vehicles=[];function makeCar(name,x,z,color,type='car'){const g=new THREE.Group();const body=mat(color),glass=mat('#71949b',.24,.12),tire=mat('#202426');box(g,0,.65,0,type==='truck'?2.3:1.8,type==='truck'?1.1:.8,type==='truck'?4.6:3.5,body);box(g,0,1.22,-.25,type==='truck'?2:1.55,.75,type==='truck'?2:1.7,glass);for(const sx of [-1,1])for(const sz of [-1,1]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(.38,.38,.22,12),tire);wheel.rotation.z=Math.PI/2;wheel.position.set(sx*.94,.38,sz*1.15);g.add(wheel)}g.position.set(x,0,z);g.userData={name,type,drive:false};scene.add(g);vehicles.push(g)}
- makeCar('Sedan',-10,-20,'#8f4541');makeCar('Blue Car',8,-20,'#456e83');makeCar('Police Jeep',31,-19,'#e1e5dc','police');makeCar('Ambulance',-2,-17,'#e8e9df','ambulance');makeCar('Truck',-16,16,'#a98b52','truck');makeCar('Motorbike',12,17,'#4e765d','bike');makeCar('Bicycle',-27,17,'#c6b78c','cycle');
- // simple promenade benches
- for(let i=0;i<6;i++){box(scene,-24+i*9,.55,35,2,.18,.65,mat('#806b50'))}
- clock=new THREE.Clock();window.addEventListener('resize',onResize);setMission(0);animate();
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+// ====================================
+// GAME SETUP
+// ====================================
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x9cc7d2);
+scene.fog = new THREE.Fog(0x9cc7d2, 45, 180);
+
+const camera = new THREE.PerspectiveCamera(
+  65, innerWidth / innerHeight, 0.1, 300
+);
+
+const renderer = new THREE.WebGLRenderer({
+  antialias: true
+});
+
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+document.querySelector("#game").appendChild(renderer.domElement);
+
+// ====================================
+// LIGHTING
+// ====================================
+
+scene.add(new THREE.HemisphereLight(
+  0xe7f5ff, 0x65704c, 2
+));
+
+const sunlight = new THREE.DirectionalLight(
+  0xffedcf, 2.5
+);
+
+sunlight.position.set(-35, 50, 25);
+sunlight.castShadow = true;
+sunlight.shadow.mapSize.set(1024, 1024);
+
+scene.add(sunlight);
+
+// ====================================
+// MATERIALS
+// ====================================
+
+function material(color, roughness = 0.85) {
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness
+  });
 }
-function onResize(){if(!renderer)return;camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}
-function distance(a,b){return Math.hypot(a.x-b.x,a.z-b.z)}
-function nearest(){let list=[];locations.forEach(l=>list.push({obj:l,x:l.x,z:l.z}));scene.traverse(o=>{if(o.userData?.name&&o.userData?.kind)list.push({obj:o.userData,x:o.position.x,z:o.position.z,ref:o})});vehicles.forEach(v=>list.push({obj:v.userData,x:v.position.x,z:v.position.z,ref:v}));list.push({obj:{name:'Oakwood Park',type:'park'},x:-39,z:12});if(player.z>43)list.push({obj:{name:'Oakwood Beach',type:'beach'},x:player.x,z:48});list.sort((a,b)=>distance(player,a)-distance(player,b));return distance(player,list[0])<5.5?list[0]:null}
-function interact(){if(vehicle){vehicle.userData.drive=false;vehicle=null;document.querySelector('#mode').textContent='ON FOOT';notify('You stepped out.');return}nearObj=nearest();if(!nearObj){notify('Move closer to a person, vehicle or place.');return}const o=nearObj.obj; if(o.type==='car'||o.type==='truck'||o.type==='police'||o.type==='ambulance'||o.type==='bike'||o.type==='cycle'){vehicle=nearObj.ref;vehicle.userData.drive=true;notify('Entered '+o.name+'. Use joystick / WASD to drive.');document.querySelector('#mode').textContent=o.name.toUpperCase();if(mission===9)complete();return}
-if(o.kind==='girlfriend'){notify('Elena: “I was hoping you would come.”');if(mission===3||mission===12)complete();return}if(o.kind==='friend'){notify('Ryan: “Bro! Good to see you.”');if(mission===2||mission===13)complete();return}if(o.kind==='sister'){notify('Maya: “You are finally home!”');if(mission===1||mission===11)complete();return}if(o.kind==='nurse'){notify('Nurse: “Welcome to Oakwood Hospital.”');if(mission===7)complete();return}
-if(o.name){notify(o.name+' · Public area');const idx=locations.findIndex(l=>l.name===o.name);if(o.name==='James Family Home'&&(mission===0||mission===18)||o.name==='Seaview Apartments'&&mission===4||o.name==='Oakwood Hospital'&&mission===6||o.name==='Police Station'&&mission===8||o.name==='Community Centre'&&mission===14||o.name==='Oakwood Flats'&&mission===15||o.name==='Beach Club'&&mission===12||o.name==='Harbour Café'&&mission===3)complete();if(o.name==='Oakwood Park'&&mission===10)complete();if(o.name==='Oakwood Beach'&&(mission===5||mission===17))complete();if(idx>=0){notify('Entering public lobby: '+o.name);const inside=box(scene,player.x,1,player.z-3,5,2.4,4,mat('#c7b99e'));setTimeout(()=>scene.remove(inside),4500)}}
+
+const grass = material(0x66885d);
+const asphalt = material(0x454c50);
+const pavement = material(0xc4bca8);
+const sand = material(0xd8c18e);
+const sea = material(0x4b9eae, 0.3);
+
+// ====================================
+// WORLD BUILDING
+// ====================================
+
+function ground(width, depth, mat, x, z) {
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(width, depth),
+    mat
+  );
+
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.set(x, 0, z);
+  mesh.receiveShadow = true;
+
+  scene.add(mesh);
+  return mesh;
 }
-function action(kind){nearObj=nearest();if(!nearObj?.obj?.kind){notify('Move close to someone first.');return}const n=nearObj.obj;if(kind==='kiss'&&n.kind!=='girlfriend'){notify('That romantic moment is for Elena.');return}const text={hug:'James gives '+n.name+' a warm hug.',kiss:'James and Elena share a kiss. ♥',wave:'James waves to '+n.name+'.',fight:'James practises a non-graphic sparring move.'};notify(text[kind])}
-function drawMap(canvas){const c=canvas.getContext('2d'),w=canvas.width,h=canvas.height;c.fillStyle='#829978';c.fillRect(0,0,w,h);const sx=w/120,sy=h/120;c.fillStyle='#438d9c';c.fillRect(0,99*sy,w,21*sy);c.fillStyle='#d6c49a';c.fillRect(0,91*sy,w,8*sy);c.fillStyle='#4d5759';[[0,40,120,7],[0,75,120,7],[38,0,7,120],[80,0,7,120],[105,0,6,120]].forEach(r=>c.fillRect((r[0]+60)*sx,(r[1]+60)*sy,r[2]*sx,r[3]*sy));locations.forEach(l=>{c.fillStyle='#d7ded5';c.fillRect((l.x-l.w/2+60)*sx,(l.z-l.d/2+60)*sy,l.w*sx,l.d*sy)});c.fillStyle='#7caac2';scene.traverse(o=>{if(o.userData?.kind){c.beginPath();c.arc((o.position.x+60)*sx,(o.position.z+60)*sy,5,0,7);c.fill()}});c.fillStyle='#f0ca7f';c.beginPath();c.arc((player.x+60)*sx,(player.z+60)*sy,8,0,7);c.fill()}
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);if(started)update(dt);renderer.render(scene,camera);drawMap(document.querySelector('#mini'))}
-function update(dt){let ix=joy.x,iz=joy.y;if(keys.w||keys.ArrowUp)iz-=1;if(keys.s||keys.ArrowDown)iz+=1;if(keys.a||keys.ArrowLeft)ix-=1;if(keys.d||keys.ArrowRight)ix+=1;const len=Math.hypot(ix,iz);if(len>1){ix/=len;iz/=len}const running=keys.Shift;let speed=vehicle? (vehicle.userData.type==='bike'?15:vehicle.userData.type==='cycle'?8:19):running?8:5.2;
-if(len>.08){const target=Math.atan2(ix,iz);if(vehicle){vehicle.rotation.y=target;vehicle.position.x+=ix*speed*dt;vehicle.position.z+=iz*speed*dt;player.x=vehicle.position.x;player.z=vehicle.position.z;avatar.position.set(player.x,0,player.z)}else{player.x+=ix*speed*dt;player.z+=iz*speed*dt;player.x=THREE.MathUtils.clamp(player.x,-56,56);player.z=THREE.MathUtils.clamp(player.z,-55,55);avatar.position.set(player.x,0,player.z);avatar.rotation.y=target;const t=performance.now()*.012;avatar.userData.legs.forEach((l,i)=>l.rotation.x=Math.sin(t+i*Math.PI)*.55);avatar.userData.arms.forEach((a,i)=>a.rotation.x=-Math.sin(t+i*Math.PI)*.35)}}
-const focus=new THREE.Vector3(player.x,1.5,player.z);const behind=new THREE.Vector3(Math.sin(avatar.rotation.y)*10,6,Math.cos(avatar.rotation.y)*10);const desired=focus.clone().add(behind);camera.position.lerp(desired,.09);camera.lookAt(focus);
-nearObj=nearest();document.querySelector('#near').textContent=nearObj?.obj?.name||nearObj?.obj?.role||'OAKWOOD';document.querySelector('#hintText').textContent=nearObj?'Tap USE / press E to interact':'Joystick / WASD to explore · Shift to run';
+
+function block(width, height, depth, mat, x, y, z) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(width, height, depth),
+    mat
+  );
+
+  mesh.position.set(x, y, z);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+
+  scene.add(mesh);
+  return mesh;
 }
-document.addEventListener('keydown',e=>{keys[e.key]=true;if(e.key.toLowerCase()==='e')interact();if(e.key.toLowerCase()==='m')toggleMap(true);if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault()});document.addEventListener('keyup',e=>keys[e.key]=false);
-function toggleMap(show){document.querySelector('#overlay').style.display=show?'flex':'none';if(show)drawMap(document.querySelector('#bigMap'))}
-document.querySelector('#mapBtn').onclick=()=>toggleMap(true);document.querySelector('#close').onclick=()=>toggleMap(false);document.querySelector('#overlay').onclick=e=>{if(e.target.id==='overlay')toggleMap(false)};
-document.querySelector('#interact').onclick=interact;['hug','kiss','wave','fight'].forEach(k=>document.querySelector('#'+k).onclick=()=>action(k==='wave'?'wave':k));
-const stick=document.querySelector('#stick'),nub=document.querySelector('#nub');function stickMove(e){const r=stick.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=e.clientX-cx,dy=e.clientY-cy;const max=38,l=Math.hypot(dx,dy);if(l>max){dx*=max/l;dy*=max/l}joy.x=dx/max;joy.y=dy/max;nub.style.transform=`translate(${dx}px,${dy}px)`}
-stick.addEventListener('pointerdown',e=>{joy.active=true;stick.setPointerCapture(e.pointerId);stickMove(e)});stick.addEventListener('pointermove',e=>{if(joy.active)stickMove(e)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>stick.addEventListener(ev,()=>{joy.active=false;joy.x=joy.y=0;nub.style.transform=''}));
-document.querySelector('#start').onclick=()=>{started=true;document.querySelector('#intro').style.display='none';if(screen.orientation?.lock)screen.orientation.lock('landscape').catch(()=>{});notify('Welcome to Oakwood, James.')};
-try{init()}catch(err){mount.innerHTML='<div style="padding:25px;color:white">This device/browser could not start WebGL. Try an updated Safari or Chrome browser.</div>';console.error(err)}
+
+ground(220, 220, grass, 0, 0);
+ground(220, 34, sand, 0, -82);
+ground(220, 55, sea, 0, -126);
+
+// Main roads
+ground(220, 13, asphalt, 0, 8);
+ground(220, 2, pavement, 0, 15);
+ground(220, 2, pavement, 0, 1);
+
+ground(13, 180, asphalt, -42, 0);
+ground(13, 180, asphalt, 43, 0);
+
+// Road markings
+const roadLine = material(0xe7dfbd);
+
+for (let x = -100; x < 110; x += 12) {
+  block(5, 0.04, 0.15, roadLine, x, 0.03, 8);
+}
+
+// ====================================
+// BUILDINGS
+// ====================================
+
+function building(x, z, width, depth, height, color) {
+
+  const wall = material(color);
+  const roof = material(0x55565a);
+  const glass = material(0x8fc3d1, 0.25);
+  const trim = material(0xf0e6d4);
+
+  block(width, height, depth,
+    wall, x, height / 2, z);
+
+  block(width + 1, 0.55, depth + 1,
+    roof, x, height + 0.25, z);
+
+  // Windows
+  for (let y = 1.5; y < height - 1; y += 2.1) {
+
+    for (let xx = -width / 2 + 1.2;
+         xx < width / 2 - 0.5;
+         xx += 2.3) {
+
+      block(0.95, 1.05, 0.09,
+        glass, x + xx, y, z + depth / 2 + 0.05);
+
+      block(0.98, 0.08, 0.12,
+        trim, x + xx, y - 0.58, z + depth / 2 + 0.1);
+    }
+  }
+
+  // Entrance
+  block(1.5, 2.4, 0.13,
+    material(0x604936),
+    x, 1.2, z + depth / 2 + 0.08);
+}
+
+// Oakwood neighbourhood
+building(-24, 28, 15, 13, 10, 0xe5c9a5); // Cafe
+building(22, 29, 17, 14, 13, 0xd7d8cf); // Apartments
+building(-67, 24, 16, 15, 12, 0xd6b6a1); // Police
+building(67, 27, 18, 15, 14, 0xd5c6a8); // Hospital
+
+building(-23, -20, 19, 15, 9, 0xc4d0bc); // Market
+building(23, -22, 18, 15, 11, 0xe1c2a4); // Beach apartments
+building(68, -22, 16, 15, 9, 0xc8d2d5); // Library
+building(-68, -22, 18, 15, 10, 0xd9c9b2); // Town hall
+
+// ====================================
+// TREES AND PARK
+// ====================================
+
+function tree(x, z, scale = 1) {
+
+  const trunk = material(0x70523a);
+  const leaves = material(0x386b4c);
+
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(
+      0.22 * scale,
+      0.32 * scale,
+      2.2 * scale,
+      8
+    ),
+    trunk
+  );
+
+  stem.position.set(x, 1.1 * scale, z);
+  stem.castShadow = true;
+  scene.add(stem);
+
+  const crown = new THREE.Mesh(
+    new THREE.SphereGeometry(1.25 * scale, 12, 10),
+    leaves
+  );
+
+  crown.position.set(x, 2.65 * scale, z);
+  crown.castShadow = true;
+  scene.add(crown);
+}
+
+for (let x = -95; x <= 95; x += 13) {
+  tree(x, 42, 0.9);
+  tree(x, -45, 0.8);
+}
+
+for (let z = -60; z < 55; z += 15) {
+  tree(-83, z);
+  tree(84, z);
+}
+
+// Park
+ground(38, 32, material(0x7d9a68), 0, 61);
+
+for (let x = -12; x <= 12; x += 12) {
+  tree(x, 57);
+}
+
+block(10, 0.35, 2,
+  material(0x8c755c), 0, 0.5, 64);
+
+// ====================================
+// CHARACTERS
+// ====================================
+
+function character(name, shirt, trousers, x, z) {
+
+  const group = new THREE.Group();
+  group.position.set(x, 0, z);
+
+  scene.add(group);
+
+  const skin = material(0xd7a47f);
+  const top = material(shirt);
+  const pants = material(trousers);
+  const hair = material(0x29221f);
+  const shoes = material(0x282c31);
+
+  const torso = new THREE.Mesh(
+    new THREE.CapsuleGeometry(0.42, 0.8, 5, 10),
+    top
+  );
+
+  torso.position.y = 1.45;
+  torso.castShadow = true;
+  group.add(torso);
+
+  const head = new THREE.Mesh(
+    new THREE.SphereGeometry(0.31, 16, 12),
+    skin
+  );
+
+  head.position.y = 2.35;
+  head.castShadow = true;
+  group.add(head);
+
+  const hairCap = new THREE.Mesh(
+    new THREE.SphereGeometry(
+      0.32, 14, 8, 0, Math.PI * 2, 0, Math.PI * 0.52
+    ),
+    hair
+  );
+
+  hairCap.position.y = 2.43;
+  group.add(hairCap);
+
+  const arms = [];
+  const legs = [];
+
+  for (const side of [-1, 1]) {
+
+    const arm = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.13, 0.58, 4, 8),
+      skin
+    );
+
+    arm.position.set(side * 0.52, 1.48, 0);
+    group.add(arm);
+    arms.push(arm);
+
+    const leg = new THREE.Mesh(
+      new THREE.CapsuleGeometry(0.17, 0.68, 4, 8),
+      pants
+    );
+
+    leg.position.set(side * 0.2, 0.55, 0);
+    group.add(leg);
+    legs.push(leg);
+
+    const foot = new THREE.Mesh(
+      new THREE.BoxGeometry(0.25, 0.14, 0.42),
+      shoes
+    );
+
+    foot.position.set(side * 0.2, 0.12, 0.09);
+    group.add(foot);
+  }
+
+  return { group, arms, legs, name };
+}
+
+const james = character(
+  "James", 0x426f83, 0x303b49, 0, 3
+);
+
+const elena = character(
+  "Elena", 0xb96f83, 0x4a4059, 8, 22
+);
+
+const ryan = character(
+  "Ryan", 0x668d59, 0x394b40, -8, 22
+);
+
+// ====================================
+// VEHICLES
+// ====================================
+
+function car(x, z, color) {
+
+  const group = new THREE.Group();
+  group.position.set(x, 0.3, z);
+  scene.add(group);
+
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(2.5, 0.8, 4.4),
+    material(color)
+  );
+
+  body.position.y = 0.65;
+  body.castShadow = true;
+  group.add(body);
+
+  const cabin = new THREE.Mesh(
+    new THREE.BoxGeometry(1.9, 0.8, 2.1),
+    material(0x8eb4bd, 0.3)
+  );
+
+  cabin.position.set(0, 1.35, -0.2);
+  group.add(cabin);
+
+  for (const xx of [-1.05, 1.05]) {
+    for (const zz of [-1.4, 1.4]) {
+
+      const wheel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.38, 0.38, 0.22, 14),
+        material(0x202326)
+      );
+
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(xx, 0.35, zz);
+      group.add(wheel);
+    }
+  }
+}
+
+car(-17, 8, 0x9a4e3e);
+car(17, 8, 0x4d6576);
+car(50, -5, 0xd4d1c7);
+
+// ====================================
+// PLAYER CONTROLS
+// ====================================
+
+let cameraYaw = 0;
+let jumpHeight = 0;
+let jumpVelocity = 0;
+
+let joystick = { x: 0, y: 0 };
+
+const joystickElement = document.querySelector("#joystick");
+const stick = document.querySelector("#stick");
+
+function updateJoystick(event) {
+
+  const rect = joystickElement.getBoundingClientRect();
+
+  let dx = event.clientX - (rect.left + rect.width / 2);
+  let dy = event.clientY - (rect.top + rect.height / 2);
+
+  const max = 34;
+  const length = Math.hypot(dx, dy);
+
+  if (length > max) {
+    dx *= max / length;
+    dy *= max / length;
+  }
+
+  joystick.x = dx / max;
+  joystick.y = dy / max;
+
+  stick.style.transform =
+    `translate(${dx}px, ${dy}px)`;
+}
+
+joystickElement.addEventListener("pointerdown", e => {
+  joystickElement.setPointerCapture(e.pointerId);
+  updateJoystick(e);
+});
+
+joystickElement.addEventListener("pointermove", e => {
+  if (e.buttons) updateJoystick(e);
+});
+
+function resetJoystick() {
+  joystick = { x: 0, y: 0 };
+  stick.style.transform = "translate(0,0)";
+}
+
+joystickElement.addEventListener("pointerup", resetJoystick);
+joystickElement.addEventListener("pointercancel", resetJoystick);
+
+// Camera rotation: drag the right side of the screen.
+let dragging = false;
+let previousX = 0;
+
+renderer.domElement.addEventListener("pointerdown", e => {
+  if (e.clientX > innerWidth * 0.48) {
+    dragging = true;
+    previousX = e.clientX;
+  }
+});
+
+renderer.domElement.addEventListener("pointermove", e => {
+  if (dragging) {
+    cameraYaw -= (e.clientX - previousX) * 0.006;
+    previousX = e.clientX;
+  }
+});
+
+renderer.domElement.addEventListener("pointerup", () => {
+  dragging = false;
+});
+
+renderer.domElement.addEventListener("pointercancel", () => {
+  dragging = false;
+});
+
+// ====================================
+// ACTION BUTTONS
+// ====================================
+
+let toastTimeout;
+
+function toast(message) {
+  const element = document.querySelector("#toast");
+  element.textContent = message;
+  element.style.opacity = 1;
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+    element.style.opacity = 0;
+  }, 1500);
+}
+
+document.querySelector("#wave").onclick = () => {
+
+  james.arms[1].rotation.z = -1.2;
+
+  toast("James waves hello!");
+
+  setTimeout(() => {
+    james.arms[1].rotation.z = 0;
+  }, 700);
+};
+
+document.querySelector("#talk").onclick = () => {
+
+  const d1 = james.group.position.distanceTo(
+    elena.group.position
+  );
+
+  const d2 = james.group.position.distanceTo(
+    ryan.group.position
+  );
+
+  if (Math.min(d1, d2) < 5) {
+    toast("You greet your friend!");
+  } else {
+    toast("Move closer to Elena or Ryan.");
+  }
+};
+
+document.querySelector("#jump").onclick = () => {
+
+  if (jumpHeight === 0) {
+    jumpVelocity = 7;
+    toast("Jump!");
+  }
+};
+
+// ====================================
+// CAMERA AND GAME LOOP
+// ====================================
+
+const clock = new THREE.Clock();
+
+function animate() {
+
+  requestAnimationFrame(animate);
+
+  const dt = Math.min(clock.getDelta(), 0.04);
+
+  const forward = -joystick.y;
+  const sideways = joystick.x;
+
+  const moving =
+    Math.abs(forward) + Math.abs(sideways) > 0.08;
+
+  if (moving) {
+
+    const direction = new THREE.Vector3(
+      sideways, 0, forward
+    ).normalize();
+
+    direction.applyAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      cameraYaw
+    );
+
+    james.group.position.addScaledVector(
+      direction, dt * 7
+    );
+
+    james.group.rotation.y =
+      Math.atan2(direction.x, direction.z);
+
+    const t = clock.elapsedTime * 10;
+
+    for (let i = 0; i < 2; i++) {
+
+      james.legs[i].rotation.x =
+        Math.sin(t + i * Math.PI) * 0.55;
+
+      james.arms[i].rotation.x =
+        -Math.sin(t + i * Math.PI) * 0.35;
+    }
+
+  } else {
+
+    james.legs.forEach(leg => {
+      leg.rotation.x *= 0.8;
+    });
+
+    james.arms.forEach(arm => {
+      arm.rotation.x *= 0.8;
+    });
+  }
+
+  // Jump physics
+  if (jumpVelocity !== 0 || jumpHeight > 0) {
+
+    jumpHeight += jumpVelocity * dt;
+    jumpVelocity -= 18 * dt;
+
+    if (jumpHeight <= 0) {
+      jumpHeight = 0;
+      jumpVelocity = 0;
+    }
+  }
+
+  james.group.position.y = jumpHeight;
+
+  // World boundaries
+  james.group.position.x = THREE.MathUtils.clamp(
+    james.group.position.x, -100, 100
+  );
+
+  james.group.position.z = THREE.MathUtils.clamp(
+    james.group.position.z, -70, 75
+  );
+
+  // Third-person follow camera
+  const target = new THREE.Vector3(
+    james.group.position.x,
+    1.5 + jumpHeight,
+    james.group.position.z
+  );
+
+  const offset = new THREE.Vector3(
+    Math.sin(cameraYaw) * 8,
+    4.8,
+    Math.cos(cameraYaw) * 8
+  );
+
+  camera.position.lerp(
+    target.clone().add(offset),
+    1 - Math.pow(0.001, dt)
+  );
+
+  camera.lookAt(target);
+
+  elena.group.rotation.y =
+    Math.sin(clock.elapsedTime * 0.5) * 0.25;
+
+  ryan.group.rotation.y =
+    Math.cos(clock.elapsedTime * 0.4) * 0.25;
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+// ====================================
+// START GAME
+// ====================================
+
+document.querySelector("#play").onclick = () => {
+
+  document.querySelector("#start").style.display = "none";
+
+  try {
+    if (screen.orientation?.lock) {
+      screen.orientation.lock("landscape").catch(() => {});
+    }
+  } catch {}
+};
+
+// ====================================
+// RESIZE
+// ====================================
+
+window.addEventListener("resize", () => {
+
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(innerWidth, innerHeight);
+});
+
 </script>
-</body></html>
+</body>
+</html>
