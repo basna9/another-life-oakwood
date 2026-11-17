@@ -203,6 +203,20 @@ button {
   </div>
 </div>
 
+<script>
+document.getElementById("play").addEventListener("click", function () {
+    document.getElementById("start").style.display = "none";
+});
+
+window.addEventListener("error", function (event) {
+    alert("Game error: " + event.message);
+});
+
+window.addEventListener("unhandledrejection", function (event) {
+    alert("Loading error: " + event.reason);
+});
+</script>
+
 <script type="module">
 import * as THREE from
 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
